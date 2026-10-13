@@ -1,0 +1,28 @@
+﻿BÁO CÁO BÀI TẬP: TÌM KIẾM LOG ĐA THƯ MỤC & XỬ LÝ LỖI HỆ THỐNG
+Phần 1: Phân tích & Đề xuất giải pháp
+* Input: Thư mục gốc /var/logs/ và từ khóa cần tìm là "TIMEOUT".
+* Output: Danh sách các dòng khớp yêu cầu, kèm theo tên tệp và số thứ tự dòng để kỹ sư truy vết.
+* Đề xuất giải pháp:
+   * Giải pháp 1: Sử dụng lệnh findstr /s /i /n "TIMEOUT" C:\var\logs\*.log Giải pháp 2: Sử dụng lệnh PowerShell chuyên dụng: 
+   * Get-ChildItem -Path "/var/logs/" -Recurse -Filter "*.log" | Select-String -Pattern "TIMEOUT".
+Phần 2: So sánh & Lựa chọn
+Bảng so sánh:
+-Tốc độ xử lý:
++Giải pháp 1:Rất nhanh (thực thi trực tiếp ở tầng thấp).
++Giải pháp 2:Khá nhanh, tối ưu tốt với môi trường PowerShell.
+-Xử lý file bị khóa:
++Giải pháp 1:Kém (dễ bị treo hoặc văng lỗi khi gặp tệp bị khóa).
++Giải pháp 2:Tốt (dễ dàng kết hợp bộ lọc lỗi ErrorAction SilentlyContinue).
+-Cross-platform:
++Giải pháp 1:Chỉ chạy tốt trên hệ điều hành Windows.
++Giải pháp 2:Hỗ trợ tốt trên cả Windows, macOS và Linux.
+-Độ phức tạp code
++Giải pháp 1:Cú pháp ngắn gọn, dễ nhớ nhưng ít tùy biến.
++Giải pháp 2:Cú pháp rõ ràng, tính linh hoạt và mở rộng cao.
+-Hiển thị số dòng:
++Giải pháp 1:Có hỗ trợ sẵn cờ hiển thị số dòng.
++Giải pháp 2:Có trả về đối tượng chi tiết kèm số dòng và tên tệp.
+Phần 3: Triển khai giải pháp tối ưu
+* Giải pháp lựa chọn: Sử dụng PowerShell (Giải pháp 2) vì hệ thống đang chạy trên Windows Server, đồng thời cho phép xử lý bẫy dữ liệu (tệp đang bị khóa bởi tiến trình khác) một cách mượt mà thông qua tham số điều khiển lỗi.
+* Câu lệnh hoàn chỉnh (đã xử lý bẫy tệp bị khóa):
+Get-ChildItem -Path "/var/logs/" -Recurse -Filter "*.log" -ErrorAction SilentlyContinue | Select-String -Pattern "TIMEOUT" -ErrorAction SilentlyContinue
